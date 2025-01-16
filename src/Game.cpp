@@ -21,13 +21,19 @@ void Game::Initialise()
     std::cerr << "SDL initialisation failed" << std::endl;
     return;
   }
+
+  SDL_DisplayMode displayMode;
+  SDL_GetCurrentDisplayMode(0, &displayMode);
+
+  windowWidth = 800; //displayMode.w;
+  windowHeight = 600; //displayMode.h;
   
   window = SDL_CreateWindow(
       "myEngine", 
       SDL_WINDOWPOS_CENTERED, 
       SDL_WINDOWPOS_CENTERED, 
-      800,
-      600,
+      windowWidth,
+      windowHeight,
       SDL_WINDOW_BORDERLESS
       ); // raw pointer to a struct
       
@@ -40,7 +46,7 @@ void Game::Initialise()
   renderer = SDL_CreateRenderer(
       window,
       -1,
-      0);
+      SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
   
   if (!renderer)
   {
@@ -48,6 +54,7 @@ void Game::Initialise()
     return;
   }
 
+  SDL_SetWindowFullscreen(window, SDL_WINDOW_FULLSCREEN);
   isRunning = true;
 }
 
@@ -91,13 +98,18 @@ void Game::Update()
 
 void Game::Render()
 {
+    SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+    SDL_RenderClear(renderer);
 
+    // Render game objects here
+
+    SDL_RenderPresent(renderer);
 }
 
 void Game::Destroy()
 {
   SDL_DestroyRenderer(renderer);
-  SDL_DestroyedWindow(window);
+  SDL_DestroyWindow(window);
   SDL_Quit();
 }
 
